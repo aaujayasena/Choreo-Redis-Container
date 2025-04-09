@@ -1,4 +1,4 @@
-FROM redis
+FROM redis:alpine
 
 COPY /script.sh /
 VOLUME ["/persistance-volume-1"]
