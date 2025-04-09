@@ -1,17 +1,22 @@
+FROM bitnami/redis:7.2.4 as base
+
+# Copy script early
+COPY script.sh /script.sh
+
+# Final image with UID 10014
 FROM bitnami/redis:7.2.4
 
-# Copy your custom script (ensure it's executable before build)
-COPY /script.sh /
+# Copy script
+COPY --from=base /script.sh /script.sh
 
-# Declare a volume for persistence
+# Set executable bit locally first (ensure before build)
+# chmod +x script.sh
+
+# Set the UID/GID explicitly (Choreo requires it)
+USER 10014
+
 VOLUME ["/persistance-volume-1"]
 WORKDIR /persistance-volume-1
 
-# Explicitly run as non-root user to satisfy Choreo and Checkov
-USER 1001
-
-# Expose Redis default port
 EXPOSE 6379
-
-# Run your startup script
 ENTRYPOINT ["/script.sh"]
