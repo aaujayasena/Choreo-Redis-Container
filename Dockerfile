@@ -1,15 +1,13 @@
-FROM redis
+FROM redis:latest
 
-# Replace vulnerable gosu binary
-RUN apt-get update && apt-get install -y curl ca-certificates && \
-    curl -sSL -o /usr/local/bin/gosu "https://github.com/tianon/gosu/releases/download/1.16/gosu-amd64" && \
-    chmod +x /usr/local/bin/gosu && gosu nobody true
-
-# Continue with your setup
+# Copy your custom script
 COPY /script.sh /
+
+# Declare a volume for persistence
 VOLUME ["/persistance-volume-1"]
 WORKDIR /persistance-volume-1
 
+# Create a non-root user (Choreo requirement)
 RUN adduser \
     --disabled-password \
     --gecos "" \
@@ -19,8 +17,11 @@ RUN adduser \
     --uid 10014 \
     "choreo" && chmod +x /script.sh
 
+# Use the unprivileged user
 USER 10014
 
+# Expose Redis default port
 EXPOSE 6379
 
+# Run your startup script
 ENTRYPOINT ["/script.sh"]
