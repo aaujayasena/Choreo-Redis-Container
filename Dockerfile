@@ -4,7 +4,8 @@ FROM bitnami/redis:7.2.4 as base
 COPY script.sh /script.sh
 
 # Final image with UID 10014
-FROM bitnami/redis:7.2.4
+FROM bitnami/redis:latest 
+#7.2.4
 
 # Copy script
 COPY --from=base /script.sh /script.sh
